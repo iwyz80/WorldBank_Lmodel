@@ -14,7 +14,7 @@ file_path ='./worldbank_data/countryGDP.csv'
 worldbank_api = 'https://api.worldbank.org/v2/country/?format=json'
 
 #create connection to already existing database
-db_engine = create_engine('postgresql://md:md@localhost/mddb')
+db_engine = create_engine('postgresql://mudano0710:mudano0710@localhost/mudano_testdb')
 
 #Make connection to database
 db_connect = db_engine.connect()
