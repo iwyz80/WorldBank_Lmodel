@@ -96,7 +96,7 @@ db_connect.execute ('commit')
 '''
 sql_statement_1 = """SELECT "Name" FROM "country_GDP_Data" WHERE "IncomeLevel" ='Upper middle income'; """
 sql_statement_2 = """SELECT "Name", "Region", "IncomeLevel", COUNT("Region")  OVER(PARTITION BY "Region")FROM "country_GDP_Data"  WHERE "IncomeLevel" = 'Low income'; """
-sql_statement_3 = """SELECT "Region","IncomeLevel",COUNT("IncomeLevel")  OVER (PARTITION BY "Region") FROM "country_GDP_Data" WHERE "IncomeLevel" = 'High income'; """
+sql_statement_3 = """SELECT "Region","IncomeLevel",COUNT("IncomeLevel")  OVER (PARTITION BY "Region") FROM "country_GDP_Data" WHERE "IncomeLevel" = 'High income' ORDER BY count DESC FETCH First 1 row only; """
 sql_statement_4 = """SELECT "Name","Region","IncomeLevel", "Y_2018", "Y_2019", "Y_2020", "Y_2021", "Y_2022", "Y_2023", SUM("Y_2018") OVER(PARTITION BY "Region") as sum_2018, SUM("Y_2019") OVER(PARTITION BY "Region") as sum_2019 , SUM("Y_2020") OVER(PARTITION BY "Region") as sum_2020, SUM("Y_2021") OVER(PARTITION BY "Region") as sum_2021, SUM("Y_2022") OVER(PARTITION BY "Region") as sum_2022, SUM("Y_2023") OVER(PARTITION BY "Region") as sum_2023 FROM "country_GDP_Data" ORDER BY("incomelevel_weight","Name"); """
 
 sql_statement_5 = """SELECT "Name","YonY_2018_2019", "YonY_2019_2020", "YonY_2020_2021", "YonY_2021_2022", "YonY_2022_2023" FROM "country_GDP_Data";"""
