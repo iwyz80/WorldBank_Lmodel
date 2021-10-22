@@ -2,9 +2,15 @@
 
 set -e
 
-DB_NAME=${1:-mudano_testdb}
-DB_USER=${2:-mudano0710}
-DB_USER_PASS=${3:-mudano0710}
+read -p "Enter Database username: " DB_USER
+read -sp "Enter Password: " DB_USER_PASS
+echo
+read -p "Enter Database name: " DB_NAME
+
+echo DB_USER=$DB_USER >.env
+echo DB_USER_PASS=$DB_USER_PASS >>.env
+echo DB_NAME=$DB_NAME >>.env
+
 
 sudo su postgres <<EOF
 psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_USER_PASS';"
