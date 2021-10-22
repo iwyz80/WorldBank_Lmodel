@@ -12,26 +12,24 @@ Run  ```pip3 install -r requirement.txt```
 > -This will install all the necessary dependencies.
 
 Run ```bash create_db.sh```
-> This will create a Postgres Database named mudano_testdb. 
+> This will create a Postgres Database on the local machine. 
 > 
-> Username and password for the owner of the Database is also created.
+> Enter Username, password and database name in the prompt. The User and the Database will be created.
  
-	username:mudano0710
 	
-	password:mudano0710
 
 Run ```python3 worldbank_code.py```
 
-> -This will run the python script and save the necessary data to the mudano_testdb Database.
+> -This will run the python script and save the necessary data to the Database.
 
 You can query the database directly from the python script by uncommenting the SQL queries section 
 in the python script.
 
 # OR
 
-Run ```psql -h localhost -U mudano0710 mudano_testdb```
+Run ```psql -h localhost -U <enter username> <enter database name>```
 
-Enter the password given above to connect to the Database.
+Enter the password you created for the Database user above to connect to the Database.
 
 Query the Database using the listed SQL queries
 
