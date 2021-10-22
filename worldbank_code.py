@@ -8,13 +8,18 @@ import requests, json
 from sqlalchemy import create_engine
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv 
+import os
+#Instantiate load_dotenv
+load_dotenv()
 
 # GDP data for countries
 file_path ='./worldbank_data/countryGDP.csv'
-worldbank_api = 'https://api.worldbank.org/v2/country/?format=json'
+worldbank_api = 'https://api.worldbank.org/v2/country/all/?per_page=300&format=json'
 
 #create connection to already existing database
-db_engine = create_engine('postgresql://mudano0710:mudano0710@localhost/mudano_testdb')
+connection_string = 'postgresql://{}:{}@localhost/{}'
+db_engine = create_engine(connection_string.format(os.environ["DB_USER"], os.environ["DB_USER_PASS"], os.environ["DB_NAME"]))
 
 #Make connection to database
 db_connect = db_engine.connect()
@@ -22,7 +27,7 @@ db_connect = db_engine.connect()
 
 # Make a request to retrieve countries data from worldBank API and read the response with json
 req = requests.get (worldbank_api)
-json_res = req.json()
+json_res = req.json()[1]
 
 #Read the country's GDP csv file
 df_gdp = pd.read_csv(file_path, sep = ',', usecols = ['Country Name', '2018 [2018]','2019 [2019]','2020 [2020]','2021 [2021]','2022 [2022]','2023 [2023]'])
@@ -32,23 +37,20 @@ columns_rename={'2018 [2018]':'Y_2018','2019 [2019]':'Y_2019','2020 [2020]':'Y_2
 
 df_gdp = df_gdp.rename(columns = columns_rename)
 
-#Drop NAN values
+#Drop NAN values and replace irregular values with 0.0001
 df_gdp.dropna(inplace = True)
+df_gdp.replace({'..':0.0001}, inplace = True)
 
 
+#Read the json file into a dataframe
+df = pd.json_normalize (json_res)
+#Extract required columns
+df = df[['name', 'incomeLevel.value','region.value']]
+#rename columns
+columns = {'name':'Name','incomeLevel.value': 'IncomeLevel', 'region.value':'Region'}
+df = df.rename(columns = columns)
 
-#Create an empty dataframe to hold the data from the web response.
-df = pd.DataFrame(columns = ['Name', 'IncomeLevel', 'Region'])
 
-#Json data is a dictionary contained in a list.
-#Loop through list to extract needed data
-
-for data in json_res[1]: #List has length 2
-	Name = data['name']
-	IncomeLevel = data['incomeLevel']['value']
-	Region = data['region']['value']
-	#Append to empty dataframe
-	df = df.append({'Name':Name, 'IncomeLevel':IncomeLevel, 'Region':Region}, ignore_index = True)
 
 
 #Filter the dataframe for incomelevel values that are not aggregate
@@ -79,7 +81,7 @@ yOny_list = ['YonY_2018_2019','YonY_2019_2020','YonY_2020_2021','YonY_2021_2022'
 gdp_year = ['Y_2018','Y_2019','Y_2020','Y_2021','Y_2022','Y_2023']
 l = 0
 while l <= len(gdp_year)-2:
-	df_data_merge[''+yOny_list[l]] = round((df_data_merge[''+gdp_year[l+1]]-df_data_merge[''+gdp_year[l]])/df_data_merge[''+gdp_year[l]]*100,2)
+	df_data_merge[''+yOny_list[l]] = round((df_data_merge[''+gdp_year[l+1]]-df_data_merge[''+gdp_year[l]])/df_data_merge[''+gdp_year[l]]*100,3)
 	l+=1
 
 
