@@ -15,7 +15,7 @@ load_dotenv()
 
 # GDP data for countries
 file_path ='./worldbank_data/countryGDP.csv'
-worldbank_api = 'https://api.worldbank.org/v2/country/all/?per_page=300&format=json'
+worldbank_api = 'https://api.worldbank.org/v2/country/?per_page=300&format=json'
 
 #create connection to already existing database
 connection_string = 'postgresql://{}:{}@localhost/{}'
